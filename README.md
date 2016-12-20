@@ -1,0 +1,2 @@
+# MiniProjectJEE-2k16
+Le but du projet est de réaliser une application de gestion de Vélib, en utilisant les technologies de géolocalisation (l’API Google Maps (https://developers.google.com/maps/) , les frameworks JEE et les services Web REST. L’application présentée permet de visualiser les disponibilités des vélos et des emplacements de parking à la disposition des utilisateurs dans le cadre d’un service web de gestion de Vélib.
