@@ -8,6 +8,7 @@ import javax.persistence.*;
  * Created by ivan on 21/12/16.
  */
 @Entity
+@Table(name = "Station")
 public class Station {
     private int id;
     private int number;
@@ -57,7 +58,7 @@ public class Station {
     }
 
     @Basic
-    @Column(name = "location", columnDefinition = "geometry", nullable = false)
+    @Column(name = "location", columnDefinition = "Point", nullable = false)
     public Point getLocation() {
         return location;
     }

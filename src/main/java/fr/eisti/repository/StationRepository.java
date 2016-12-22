@@ -1,4 +1,4 @@
-package fr.eisti.repositories;
+package fr.eisti.repository;
 
 import fr.eisti.domain.Station;
 import org.springframework.data.repository.CrudRepository;

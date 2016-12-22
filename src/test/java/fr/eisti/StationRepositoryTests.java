@@ -1,6 +1,6 @@
 package fr.eisti;
 
-import fr.eisti.repositories.StationRepository;
+import fr.eisti.repository.StationRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
