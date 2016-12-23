@@ -20,4 +20,5 @@ public interface StationRepository extends CrudRepository<Station, Integer> {
     @Query(value = "SELECT * FROM Station WHERE st_contains((SELECT geom FROM County WHERE code_dept=:county), Location);", nativeQuery = true)
     List<Station> findByCounty(@Param("county") int county);
 
+    Station findByNumber(int number);
 }
