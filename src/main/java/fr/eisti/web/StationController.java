@@ -20,6 +20,11 @@ public class StationController {
         return stationRepository.findAll();
     }
 
+    @RequestMapping("/stations/county/{county}")
+    public Iterable ListByCounty(@PathVariable("county") int county) {
+        return stationRepository.findByCounty(county);
+    }
+
     @RequestMapping("/stations/district/{district}")
     public Iterable ListByDistrict(@PathVariable("district") int district) {
         return stationRepository.findByDistrict(district);
