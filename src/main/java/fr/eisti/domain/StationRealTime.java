@@ -2,6 +2,8 @@ package fr.eisti.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
+
 /**
  * Created by ivan on 23/12/16.
  */
@@ -21,4 +23,6 @@ public class StationRealTime {
     private int availableBikeStands;
     @JsonProperty("available_bikes")
     private int availableBikes;
+    @JsonProperty("last_update")
+    private Date lastUpdate;
 }
