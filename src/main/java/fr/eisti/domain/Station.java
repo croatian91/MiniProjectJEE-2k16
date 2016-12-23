@@ -1,6 +1,8 @@
 package fr.eisti.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.vividsolutions.jts.geom.Point;
+import fr.eisti.StationDeserializer;
 
 import javax.persistence.*;
 
@@ -9,12 +11,23 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "Station")
+@JsonDeserialize(using = StationDeserializer.class)
 public class Station {
     private int id;
     private int number;
     private String name;
     private String address;
     private Point location;
+
+    public Station() {
+    }
+
+    public Station(int number, String name, String address, Point location) {
+        this.number = number;
+        this.name = name;
+        this.address = address;
+        this.location = location;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -91,5 +104,16 @@ public class Station {
         result = 31 * result + (address != null ? address.hashCode() : 0);
         result = 31 * result + (location != null ? location.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Station{" +
+                "id=" + id +
+                ", number=" + number +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", location=" + location +
+                '}';
     }
 }
