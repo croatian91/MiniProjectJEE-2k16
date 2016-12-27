@@ -9,6 +9,8 @@ import java.util.Date;
  */
 public class StationRealTime {
 
+    @JsonProperty("address")
+    private String address;
     @JsonProperty("banking")
     private boolean banking;
     @JsonProperty("bonus")
