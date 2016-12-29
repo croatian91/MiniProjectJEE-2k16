@@ -1,6 +1,10 @@
 package fr.eisti.web;
 
+import fr.eisti.domain.County;
+import fr.eisti.domain.District;
 import fr.eisti.domain.StationRealTime;
+import fr.eisti.repository.CountyRepository;
+import fr.eisti.repository.DistrictRepository;
 import fr.eisti.repository.StationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +21,12 @@ public class StationController {
     @Autowired
     private StationRepository stationRepository;
 
+    @Autowired
+    private CountyRepository countyRepository;
+
+    @Autowired
+    DistrictRepository districtRepository;
+
     @RequestMapping("/stations/all")
     public Iterable List() {
         return stationRepository.findAll();
@@ -27,14 +37,29 @@ public class StationController {
         return stationRepository.findByCounty(county);
     }
 
+    @RequestMapping("/stations/county/lat/{lat}/lng/{lng}/")
+    public Iterable ListByCounty(@PathVariable("lat") double lat, @PathVariable("lng") double lng) {
+        County county = countyRepository.findByCoordinates(lat, lng);
+
+        return county != null ? stationRepository.findByCounty(county.getCodeDept()) : null;
+    }
+
     @RequestMapping("/stations/district/{district}")
     public Iterable ListByDistrict(@PathVariable("district") int district) {
         return stationRepository.findByDistrict(district);
     }
 
+    @RequestMapping("/stations/district/lat/{lat}/lng/{lng}/")
+    public Iterable ListByDistrict(@PathVariable("lat") double lat, @PathVariable("lng") double lng) {
+        District district = districtRepository.findByCoordinates(lat, lng);
+
+        return district != null ? stationRepository.findByDistrict(district.getcAr()) : null;
+    }
+
     @RequestMapping("/stations/station/{station_number}")
     public StationRealTime getInformation(@PathVariable("station_number") int stationNumber) {
         RestTemplate restTemplate = new RestTemplate();
+
         return restTemplate.getForObject("https://api.jcdecaux.com/vls/v1/stations/" + stationNumber + "?contract=Paris&apiKey=85871bc0de9ac4eef048c1d768fe08909b3432d7", StationRealTime.class);
     }
 }
