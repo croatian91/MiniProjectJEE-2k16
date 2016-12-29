@@ -69,8 +69,8 @@ function addStationsToMap(map) {
                     title: place.name,
                     icon: icon,
                     position: new google.maps.LatLng(
-                        parseFloat(place.location.coordinates[1]),
-                        parseFloat(place.location.coordinates[0])
+                        parseFloat(place.location.coordinates[1]),  //Lat
+                        parseFloat(place.location.coordinates[0])   //Lng
                     )
                 });
 
@@ -90,26 +90,22 @@ function addStationsToMap(map) {
 
 /**
  * Gets the current position via geolocation.
- * Add stations to the map.
+ * Adds stations to the map.
  */
 function initMap() {
     $(document).ready(function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
+                //For testing
                 let pos = {
                     lat: 48.8645278209514,
                     lng: 2.416170724425901
                 };
 
                 let map = new google.maps.Map(document.getElementById('map'), {
-                    center: pos,
+                    center: pos, //{lat: position.coords.latitude, lng: position.coords.longitude}
                     zoom: 14
                 });
-
-                // map.setCenter({
-                //     lat: position.coords.latitude,
-                //     lng: position.coords.longitude
-                // });
 
                 addStationsToMap(map);
             });
