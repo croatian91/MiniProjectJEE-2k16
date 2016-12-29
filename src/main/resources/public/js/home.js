@@ -89,6 +89,18 @@ function addStationsToMap(map) {
 }
 
 /**
+ * Estimate the consumption of energy driving a bicycle.
+ *
+ * @param met intensity level. soft: MET = 4, average: MET = 7, intense: MET = 10, very intense: MET = 14
+ * @param time in minutes
+ * @param weight in kilograms
+ * @returns {number} in Kcal
+ */
+function getEnergyConsumption(met, time, weight) {
+    return met * 3.5 * weight * time / 200;
+}
+
+/**
  * Gets the current position via geolocation.
  * Adds stations to the map.
  */
