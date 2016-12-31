@@ -1,5 +1,7 @@
 package fr.eisti.service;
 
+import com.vividsolutions.jts.geom.Point;
+import fr.eisti.domain.Direction;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,5 +10,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DirectionService {
 
-
+    Direction getDirection(Point origin, Point destination);
 }
