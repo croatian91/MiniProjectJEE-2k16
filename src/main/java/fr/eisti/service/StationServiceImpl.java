@@ -32,7 +32,8 @@ public class StationServiceImpl implements StationService {
 
     @Override
     public List<Station> getStationListByContract(String contract) {
-        String url = String.format("https://api.jcdecaux.com/vls/v1/stations?contract=%s&apiKey=%s",
+        String url = String.format(
+                "https://api.jcdecaux.com/vls/v1/stations?contract=%s&apiKey=%s",
                 contract,
                 apiKey
         );
@@ -44,7 +45,8 @@ public class StationServiceImpl implements StationService {
 
     @Override
     public StationRealTime getStationInformation(String contractName, int stationNumber) {
-        String url = String.format("https://api.jcdecaux.com/vls/v1/stations/%2d?contract=%s&apiKey=%s",
+        String url = String.format(
+                "https://api.jcdecaux.com/vls/v1/stations/%2d?contract=%s&apiKey=%s",
                 stationNumber,
                 contractName,
                 apiKey
