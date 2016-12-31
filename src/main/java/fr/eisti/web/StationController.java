@@ -6,6 +6,7 @@ import fr.eisti.domain.StationRealTime;
 import fr.eisti.repository.CountyRepository;
 import fr.eisti.repository.DistrictRepository;
 import fr.eisti.repository.StationRepository;
+import fr.eisti.service.StationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,10 @@ public class StationController {
     private CountyRepository countyRepository;
 
     @Autowired
-    DistrictRepository districtRepository;
+    private DistrictRepository districtRepository;
+
+    @Autowired
+    private StationServiceImpl stationService;
 
     @RequestMapping("/stations/all")
     public Iterable List() {
@@ -58,8 +62,6 @@ public class StationController {
 
     @RequestMapping("/stations/station/{station_number}")
     public StationRealTime getInformation(@PathVariable("station_number") int stationNumber) {
-        RestTemplate restTemplate = new RestTemplate();
-
-        return restTemplate.getForObject("https://api.jcdecaux.com/vls/v1/stations/" + stationNumber + "?contract=Paris&apiKey=85871bc0de9ac4eef048c1d768fe08909b3432d7", StationRealTime.class);
+        return stationService.getStationInformation("Paris", stationNumber);
     }
 }
