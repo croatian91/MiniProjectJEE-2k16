@@ -38,6 +38,20 @@ function addMarkerListener(marker) {
     });
 }
 
+function getDirection(origin, destination) {
+    $.ajax({
+        type: "GET",
+        url: `directions/origin/lat/${origin.lat}/lng/${origin.lng}/destination/lat/${destination.lat}/lng/${destination.lng}/`,
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+        },
+        error: function (response) {
+            console.log(response);
+        }
+    });
+}
+
 /**
  * Retrieves stations within the same county/district as the client.
  * Creates a marker referring each station.
@@ -118,6 +132,11 @@ function initMap() {
                     center: pos, //{lat: position.coords.latitude, lng: position.coords.longitude}
                     zoom: 14
                 });
+
+                getDirection(
+                    {lat: 48.8645278209514, lng: 2.416170724425901},
+                    {lat: 48.87242006305313, lng: 2.348395236282807}
+                );
 
                 addStationsToMap(map);
             });
