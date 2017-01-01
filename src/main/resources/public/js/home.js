@@ -133,6 +133,8 @@ function initMap() {
                     zoom: 14
                 });
 
+                map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push($('.footer')[0]);
+
                 getDirection(
                     {lat: 48.8645278209514, lng: 2.416170724425901},
                     {lat: 48.87242006305313, lng: 2.348395236282807}
