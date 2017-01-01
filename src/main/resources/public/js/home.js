@@ -42,20 +42,46 @@ function addLine(path, map) {
     path.setMap(map);
 }
 
+/**
+ * Removes the path on the map.
+ *
+ * @param path
+ */
 function removeLine(path) {
     path.setMap(null);
 }
 
+/**
+ * Adds two markers on the map. One for the origin and the another for the destination.
+ *
+ * @param origin
+ * @param destination
+ * @param map
+ */
 function addDirectionMarkers(origin, destination, map) {
     origin.setMap(map);
     destination.setMap(map);
 }
 
+/**
+ * Removes markers of the direction.
+ *
+ * @param origin
+ * @param destination
+ */
 function removeDirectionMarkers(origin, destination) {
     origin.setMap(null);
     destination.setMap(null);
 }
 
+/**
+ * Retrieves the route between two points.
+ * Adds the route and the markers on the map .
+ *
+ * @param origin
+ * @param destination
+ * @param map
+ */
 function traceDirection(origin, destination, map) {
     $.ajax({
         type: "GET",
