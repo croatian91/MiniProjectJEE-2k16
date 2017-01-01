@@ -38,13 +38,54 @@ function addMarkerListener(marker) {
     });
 }
 
-function getDirection(origin, destination) {
+function addLine(path, map) {
+    path.setMap(map);
+}
+
+function removeLine(path) {
+    path.setMap(null);
+}
+
+function addDirectionMarkers(origin, destination, map) {
+    origin.setMap(map);
+    destination.setMap(map);
+}
+
+function removeDirectionMarkers(origin, destination) {
+    origin.setMap(null);
+    destination.setMap(null);
+}
+
+function traceDirection(origin, destination, map) {
     $.ajax({
         type: "GET",
         url: `directions/origin/lat/${origin.lat}/lng/${origin.lng}/destination/lat/${destination.lat}/lng/${destination.lng}/`,
         dataType: 'json',
         success: function (data) {
             console.log(data);
+            if (data.hasOwnProperty('routes') && data.routes.length > 0) {
+                let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points);
+                let path = new google.maps.Polyline({
+                    path: points,
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 1.0,
+                    strokeWeight: 2
+                });
+
+                let currentPositionMarker = new google.maps.Marker({
+                    position: data.routes[0].legs[0].start_location,
+                    label: 'A',
+                });
+
+                let destinationMarker = new google.maps.Marker({
+                    position: data.routes[0].legs[0].end_location,
+                    label: 'B',
+                });
+
+                addLine(path, map);
+                addDirectionMarkers(currentPositionMarker, destinationMarker, map);
+            }
+
         },
         error: function (response) {
             console.log(response);
@@ -124,21 +165,26 @@ function initMap() {
             navigator.geolocation.getCurrentPosition(function (position) {
                 //For testing
                 let pos = {
-                    lat: 48.8645278209514,
-                    lng: 2.416170724425901
+                    lat: 48.893268664697416,
+                    lng: 2.412715733388685
                 };
 
                 let map = new google.maps.Map(document.getElementById('map'), {
-                    center: pos, //{lat: position.coords.latitude, lng: position.coords.longitude}
+                    center: pos, //{lat: position.coords.latitude, lng: position.coords.longitude},
                     zoom: 14
                 });
 
+                traceDirection(
+                    pos,
+                    {lat: 48.87242006305313, lng: 2.348395236282807},
+                    map
+                );
+
                 map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push($('.footer')[0]);
 
-                getDirection(
-                    {lat: 48.8645278209514, lng: 2.416170724425901},
-                    {lat: 48.87242006305313, lng: 2.348395236282807}
-                );
+                map.addListener('click', function (e) {
+                    console.log('click');
+                });
 
                 addStationsToMap(map);
             });
