@@ -38,6 +38,12 @@ function addMarkerListener(marker) {
     });
 }
 
+/**
+ * Adds a path on the map.
+ *
+ * @param path
+ * @param map
+ */
 function addLine(path, map) {
     path.setMap(map);
 }
