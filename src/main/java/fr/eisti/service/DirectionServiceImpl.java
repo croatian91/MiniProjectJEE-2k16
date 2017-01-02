@@ -20,7 +20,7 @@ public class DirectionServiceImpl implements DirectionService {
     @Override
     public Direction getDirection(Point origin, Point destination) {
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/directions/json?origin=%.2f,%.2f&destination=%.2f,%.2f&units=metric&mode=bicycling&key=%s",
+                "https://maps.googleapis.com/maps/api/directions/json?origin=%.20f,%.20f&destination=%.20f,%.20f&units=metric&mode=bicycling&key=%s",
                 origin.getX(),
                 origin.getY(),
                 destination.getX(),
