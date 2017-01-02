@@ -175,6 +175,18 @@ function addStationsToMap(map) {
 }
 
 /**
+ * Estimate the CO2 emission of a car.
+ * The constant is a generic factor calculated
+ * using the latest version (6.1) of Bilan Carbone®.
+ *
+ * @param distance in kms.
+ * @returns {number} in kgs.
+ */
+function getCO2Emission(distance) {
+    return 0.06981 * distance;
+}
+
+/**
  * Estimate the consumption of energy driving a bicycle.
  *
  * @param met intensity level. soft: MET = 4, average: MET = 7, intense: MET = 10, very intense: MET = 14
