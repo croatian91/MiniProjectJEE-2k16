@@ -106,12 +106,11 @@ function traceDirection(origin, destination, map) {
 
                 let currentPositionMarker = new google.maps.Marker({
                     position: data.routes[0].legs[0].start_location,
-                    label: 'A',
                 });
 
                 let destinationMarker = new google.maps.Marker({
                     position: data.routes[0].legs[0].end_location,
-                    label: 'B',
+                    icon: '/images/green-dot.png',
                 });
 
                 addLine(path, map);
@@ -207,7 +206,7 @@ function initMap() {
                 });
 
                 traceDirection(
-                    pos,
+                    map.getCenter().toJSON(),
                     {lat: 48.87242006305313, lng: 2.348395236282807},
                     map
                 );
