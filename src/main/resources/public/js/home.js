@@ -215,6 +215,13 @@ function getEnergyConsumption(met, time, weight) {
 }
 
 /**
+ * Disconnection of the user.
+ */
+function disconnection() {
+    document.getElementById('disconnectionForm').submit();
+}
+
+/**
  * Gets the current position via geolocation.
  * Adds stations to the map.
  */

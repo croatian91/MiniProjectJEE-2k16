@@ -33,7 +33,9 @@
     <a href="#">Direction</a>
     <a href="#">Favorites</a>
     <a href="#">Settings</a>
-    <a href="#">Disconnection</a>
+    <form id="disconnectionForm" th:action="@{/logout}" method="post">
+        <a href="javascript:void(0)" onclick="disconnection();">Disconnection</a>
+    </form>
 </div>
 
 <!-- Menu button -->
