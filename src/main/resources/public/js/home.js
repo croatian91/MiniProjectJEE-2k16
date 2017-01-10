@@ -128,16 +128,16 @@ function traceDirection(origin, destination, map) {
  * Opens the side menu.
  */
 function openNav() {
-    document.getElementById("menu").style.width = "250px";
-    document.getElementById("map").style.marginLeft = "250px";
+    $('#menu').css('width', '250px');
+    $('#map').css('marginLeft', '250px');
 }
 
 /**
  * Closes the side menu.
  */
 function closeNav() {
-    document.getElementById("menu").style.width = "0";
-    document.getElementById("map").style.marginLeft = "0";
+    $('#menu').css('width', '0');
+    $('#map').css('marginLeft', '0');
 }
 
 /**
