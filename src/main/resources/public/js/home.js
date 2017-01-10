@@ -125,6 +125,22 @@ function traceDirection(origin, destination, map) {
 }
 
 /**
+ * Opens the side menu.
+ */
+function openNav() {
+    document.getElementById("menu").style.width = "250px";
+    document.getElementById("map").style.marginLeft = "250px";
+}
+
+/**
+ * Closes the side menu.
+ */
+function closeNav() {
+    document.getElementById("menu").style.width = "0";
+    document.getElementById("map").style.marginLeft = "0";
+}
+
+/**
  * Retrieves stations within the same county/district as the client.
  * Creates a marker referring each station.
  * Finally, adds the markers to the google map.
@@ -224,6 +240,7 @@ function initMap() {
                 );
 
                 map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push($('.footer')[0]);
+                map.controls[google.maps.ControlPosition.TOP_LEFT].push($('#menuBtn')[0]);
 
                 map.addListener('click', function (e) {
                     console.log('click');
