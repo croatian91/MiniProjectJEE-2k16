@@ -136,7 +136,7 @@ function traceDirection(origin, destination, map) {
 function addStationsToMap(map) {
     $.ajax({
         type: "GET",
-        url: `/stations/county/lat/${map.getCenter().lng()}/lng/${map.getCenter().lat()}/`,
+        url: `/stations/distance/0.5/lat/${map.getCenter().lat()}/lng/${map.getCenter().lng()}/`,
         dataType: 'json',
         success: function (data) {
             const ICON_SIZE = 38;

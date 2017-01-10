@@ -59,6 +59,15 @@ public class StationController {
         return district != null ? stationRepository.findByDistrict(district.getcAr()) : null;
     }
 
+    @RequestMapping("/stations/distance/{distance}/lat/{lat}/lng/{lng}/")
+    public Iterable getStationListByDistance(
+            @PathVariable("distance") double distance,
+            @PathVariable("lat") double lat,
+            @PathVariable("lng") double lng
+    ) {
+        return stationRepository.findByDistance(lat, lng, distance);
+    }
+
     @RequestMapping("/stations/station/{station_number}")
     public StationRealTime getInformation(@PathVariable("station_number") int stationNumber) {
         return stationService.getStationInformation("Paris", stationNumber);

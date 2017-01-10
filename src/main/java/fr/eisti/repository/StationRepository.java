@@ -20,5 +20,8 @@ public interface StationRepository extends CrudRepository<Station, Integer> {
     @Query(value = "SELECT * FROM Station WHERE st_contains((SELECT geom FROM County WHERE code_dept=:county), Location);", nativeQuery = true)
     List<Station> findByCounty(@Param("county") int county);
 
+    @Query(value = "SELECT * FROM Station WHERE MBRContains(LineString(Point(:lng + :distance / (111.1 / COS(RADIANS(:lat))), :lat + :distance / 111.1), Point(:lng - :distance / (111.1 / COS(RADIANS(:lat))), :lat - :distance / 111.1)), Location)", nativeQuery = true)
+    List<Station> findByDistance(@Param("lat") double lat, @Param("lng") double lng, @Param("distance") double distance);
+
     Station findByNumber(int number);
 }
