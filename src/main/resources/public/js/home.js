@@ -141,6 +141,15 @@ function closeNav() {
 }
 
 /**
+ * The marker is animated. i.e. bounces.
+ *
+ * @param marker
+ */
+function toggleBounce(marker) {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+}
+
+/**
  * Retrieves stations within the same county/district as the client.
  * Creates a marker referring each station.
  * Finally, adds the markers to the google map.
@@ -230,27 +239,40 @@ function initMap() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 //For testing
-                let pos = {
+                position = {
                     lat: 48.893268664697416,
                     lng: 2.412715733388685
                 };
 
+                let update_timeout = null;
+
                 let map = new google.maps.Map(document.getElementById('map'), {
-                    center: pos, //{lat: position.coords.latitude, lng: position.coords.longitude},
+                    center: position, //{lat: position.coords.latitude, lng: position.coords.longitude},
                     zoom: 14
                 });
 
-                traceDirection(
-                    map.getCenter().toJSON(),
-                    {lat: 48.87242006305313, lng: 2.348395236282807},
-                    map
-                );
+                let positionMarker = new google.maps.Marker({
+                    map: map,
+                    title: "You are here!",
+                    position: position
+                });
+
+                toggleBounce(positionMarker);
 
                 map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push($('.footer')[0]);
                 map.controls[google.maps.ControlPosition.TOP_LEFT].push($('#menuBtn')[0]);
 
-                map.addListener('click', function (e) {
-                    console.log('click');
+                map.addListener('click', function (event) {
+                    update_timeout = setTimeout(function () {
+                        let lat = event.latLng.lat(),
+                            lng = event.latLng.lng();
+
+                        traceDirection(position, {lat: lat, lng: lng}, map);
+                    }, 200);
+                });
+
+                google.maps.event.addListener(map, 'dblclick', function () {
+                    clearTimeout(update_timeout);
                 });
 
                 addStationsToMap(map);
