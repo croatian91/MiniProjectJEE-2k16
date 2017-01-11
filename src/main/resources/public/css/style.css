@@ -55,7 +55,7 @@ input {
     width: 50px;
 }
 
-form {
+form[name="f"] {
     margin: 100px;
 }
 

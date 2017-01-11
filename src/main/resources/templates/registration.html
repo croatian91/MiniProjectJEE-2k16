@@ -11,7 +11,7 @@
 <div class="container">
     <p th:if="${loginError}" class="error">Wrong user or password</p>
     <div tiles:fragment="content">
-        <form th:action="@{/registration}" th:object="${userForm}" method="post">
+        <form name="f" th:action="@{/registration}" th:object="${userForm}" method="post">
             <div class="form-group row">
                 <fieldset>
                     <legend>Registration</legend>
