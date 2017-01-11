@@ -104,17 +104,18 @@ function traceDirection(origin, destination, map) {
                     strokeWeight: 2
                 });
 
-                let currentPositionMarker = new google.maps.Marker({
+                let originMarker = new google.maps.Marker({
                     position: data.routes[0].legs[0].start_location,
+                    icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
                 });
 
                 let destinationMarker = new google.maps.Marker({
                     position: data.routes[0].legs[0].end_location,
-                    icon: '/images/green-dot.png',
+                    icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-b.png&text=B&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
                 });
 
                 addLine(path, map);
-                addDirectionMarkers(currentPositionMarker, destinationMarker, map);
+                addDirectionMarkers(originMarker, destinationMarker, map);
             }
 
         },
