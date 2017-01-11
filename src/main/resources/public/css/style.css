@@ -51,6 +51,18 @@ html, body {
     cursor: pointer;
 }
 
+input {
+    width: 50px;
+}
+
+form {
+    margin: 50px;
+}
+
+button[type=submit] {
+    margin-top: 15px;
+}
+
 @media screen and (max-height: 450px) {
     .sidenav {
         padding-top: 15px;

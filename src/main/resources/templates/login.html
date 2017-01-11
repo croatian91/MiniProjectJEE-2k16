@@ -8,25 +8,29 @@
 
 </head>
 <body>
-<div tiles:fragment="content">
-    <form name="f" th:action="@{/login}" method="post">
-        <fieldset>
-            <legend>Login</legend>
-            <div th:if="${param.error}" class="alert alert-danger">
-                <p th:text="${error}"></p>
+<div class="container">
+    <div tiles:fragment="content">
+        <form name="f" th:action="@{/login}" method="post">
+            <div class="form-group row">
+                <fieldset>
+                    <legend>Login</legend>
+                    <div th:if="${param.error}" class="alert alert-danger">
+                        <p th:text="${error}"></p>
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success">
+                        <p th:text="${message}"></p>
+                    </div>
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" name="username"/>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" name="password"/>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </div>
+                </fieldset>
             </div>
-            <div th:if="${param.logout}" class="alert alert-success">
-                <p th:text="${message}"></p>
-            </div>
-            <label for="username">Username</label>
-            <input type="text" id="username" class="form-control" name="username"/>
-            <label for="password">Password</label>
-            <input type="password" id="password" class="form-control" name="password"/>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-default">Log in</button>
-            </div>
-        </fieldset>
-    </form>
+        </form>
+    </div>
 </div>
 </body>
 </html>
