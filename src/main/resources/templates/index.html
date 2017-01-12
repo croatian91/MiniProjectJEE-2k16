@@ -19,10 +19,18 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="settingsModalLabel">Options</h4>
+                <h4 class="modal-title" id="settingsModalLabel">Settings</h4>
             </div>
             <div class="modal-body">
-                ...
+                <div class="row">
+                    <div class="col-xs-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">Weight: </span>
+                            <input type="text" class="form-control" placeholder="Your weight in Kg"/>
+                            <span class="input-group-addon">Kg</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -30,16 +38,16 @@
 
 <!-- Side nav -->
 <div id="menu" class="sidenav">
-    <a href="javascript:void(0)" class="closeBtn" onclick="closeNav()">&times;</a>
+    <a href="javascript:void(0)" class="closeBtn">&times;</a>
     <a href="#">Direction</a>
     <a href="#">Favorites</a>
-    <a href="#">Settings</a>
+    <a href="#settingsModal" data-toggle="modal">Settings</a>
     <form id="disconnectionForm" th:action="@{/logout}" method="post">
         <a href="javascript:void(0)" onclick="disconnection();">Disconnection</a>
     </form>
 </div>
 
-<div id="directions">
+<div id="directions" style="visibility: hidden">
     <div class="header">
         <p>
             <span>Distance: <strong id="distance"></strong></span> <br/>
@@ -63,13 +71,13 @@
 </div>
 
 <!-- Menu button -->
-<span id="menuBtn" onclick="openNav()">&#9776;</span>
+<span id="menuBtn" style="visibility: hidden">&#9776;</span>
 
 <!-- Map -->
 <div id="map"></div>
 
 <!-- Social media buttons -->
-<footer class="footer">
+<footer id="footer">
     <div class="g-plusone" data-annotation="none"></div>
 </footer>
 
@@ -80,7 +88,7 @@
         th:src="@{/webjars/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js}"></script>
 <script src="js/home.js" th:src="@{/js/home.js}"></script>
 <script src="https://apis.google.com/js/platform.js" th:async="async" th:defer="defer"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4yvBrfQ4S6pHc3itNV-X4jIbTPflXRiU&amp;libraries=geometry,places&amp;callback=initMap"
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4yvBrfQ4S6pHc3itNV-X4jIbTPflXRiU&amp;libraries=geometry,places"
         async="async" defer="defer">
 </script>
 </body>
