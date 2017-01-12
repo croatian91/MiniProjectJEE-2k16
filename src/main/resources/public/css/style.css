@@ -81,6 +81,10 @@ button[type=submit] {
     width: 300px;
 }
 
+.modal-body .row {
+    margin: 10px;
+}
+
 @media screen and (max-height: 480px) {
     .sidenav {
         padding-top: 15px;
