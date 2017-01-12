@@ -80,6 +80,25 @@ function removeDirectionMarkers(origin, destination) {
     destination.setMap(null);
 }
 
+function updateInformation(data) {
+    let distance = data.distance.value / 1000,
+        duration = data.duration.value / 60,
+        calories = getEnergyConsumption(4, duration, 65),
+        emission = getCO2Emission(distance);
+
+    $('#distance').text(data.distance.text);
+    $('#duration').text(data.duration.text);
+    $('#calories').text(calories + ' Kcal');
+    $('#emission').text(emission + ' Kg');
+
+    $('#directionTable').find('tbody tr').remove();
+
+    data.steps.forEach(function (step) {
+        console.log(step.html_instructions);
+        $('#directionTable').find('tbody').append(`<tr><td>${step.distance.text}</td><td>${step.html_instructions}</td></tr>`);
+    });
+}
+
 /**
  * Retrieves the route between two points.
  * Adds the route and the markers on the map .
@@ -116,6 +135,7 @@ function traceDirection(origin, destination, map) {
 
                 addLine(path, map);
                 addDirectionMarkers(originMarker, destinationMarker, map);
+                updateInformation(data.routes[0].legs[0]);
             }
 
         },
@@ -209,7 +229,7 @@ function addStationsToMap(map) {
  * @returns {number} in kgs.
  */
 function getCO2Emission(distance) {
-    return 0.06981 * distance;
+    return Number((0.06981 * distance).toFixed(1));
 }
 
 /**
@@ -221,7 +241,7 @@ function getCO2Emission(distance) {
  * @returns {number} in Kcal
  */
 function getEnergyConsumption(met, time, weight) {
-    return met * 3.5 * weight * time / 200;
+    return Number((met * 3.5 * weight * time / 200).toFixed(1));
 }
 
 /**
@@ -262,6 +282,7 @@ function initMap() {
 
                 map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push($('.footer')[0]);
                 map.controls[google.maps.ControlPosition.TOP_LEFT].push($('#menuBtn')[0]);
+                map.controls[google.maps.ControlPosition.TOP_RIGHT].push($('#directions')[0]);
 
                 map.addListener('click', function (event) {
                     update_timeout = setTimeout(function () {
