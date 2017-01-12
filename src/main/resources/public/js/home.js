@@ -82,6 +82,11 @@ $(document).ready(function () {
         destination.setMap(null);
     }
 
+    /**
+     * Updates information about the direction. i.e. distance, duration, etc..
+     *
+     * @param data
+     */
     function updateInformation(data) {
         let distance = data.distance.value / 1000,
             duration = data.duration.value / 60,
