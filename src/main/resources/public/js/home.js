@@ -77,7 +77,11 @@ $(document).ready(function () {
     function updateInformation(data) {
         let distance = data.distance.value / 1000,
             duration = data.duration.value / 60,
-            calories = getEnergyConsumption(localStorage.intensity, duration, localStorage.weight),
+            calories = getEnergyConsumption(
+                localStorage.getItem('intensity'),
+                duration,
+                localStorage.getItem('weight')
+            ),
             emission = getCO2Emission(distance);
 
         $('#distance').text(data.distance.text);
@@ -235,11 +239,6 @@ $(document).ready(function () {
         document.getElementById('disconnectionForm').submit();
     }
 
-    function saveSettings() {
-        localStorage.weight = $('#weight').val();
-        localStorage.intensity = $('select[name=intensity]').val();
-    }
-
     function createMarkers() {
         path = new google.maps.Polyline({
             strokeColor: "#FF0000",
@@ -258,6 +257,28 @@ $(document).ready(function () {
         map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('footer'));
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('menuBtn'));
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(document.getElementById('directions'));
+    }
+
+    function saveSettings() {
+        let weight = $('#weight').val(), intensity = $('select[name=intensity]').val();
+
+        localStorage.setItem('weight', weight);
+        localStorage.setItem('intensity', intensity);
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    function loadSettings() {
+        let intensity, weight;
+
+        if ((intensity = localStorage.getItem('intensity')) && intensity != undefined)
+            $('#intensity').val(intensity);
+
+        if ((weight = localStorage.getItem('weight')) && weight != undefined)
+            $('#weight').val(weight);
+
+        return intensity > 0 && weight > 0;
     }
 
     /**
@@ -311,7 +332,8 @@ $(document).ready(function () {
     }
 
     $(window).load(function () {
-        $('#settingsModal').modal('show');
+        if (loadSettings() == false)
+            $('#settingsModal').modal('show');
 
         $('#menu').find('a').on('click', closeNav);
         $('#menuBtn').on('click', openNav);
