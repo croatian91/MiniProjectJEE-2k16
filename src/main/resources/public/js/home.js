@@ -1,6 +1,13 @@
 'use strict';
 
 $(document).ready(function () {
+    /**
+     *  Global variables.
+     */
+    let path,
+        originMarker,
+        destinationMarker,
+        markers = [];
 
     /**
      * Adds a listener for each marker.
@@ -51,15 +58,6 @@ $(document).ready(function () {
     }
 
     /**
-     * Removes the path on the map.
-     *
-     * @param path
-     */
-    function removeLine(path) {
-        path.setMap(null);
-    }
-
-    /**
      * Adds two markers on the map. One for the origin and the another for the destination.
      *
      * @param origin
@@ -69,17 +67,6 @@ $(document).ready(function () {
     function addDirectionMarkers(origin, destination, map) {
         origin.setMap(map);
         destination.setMap(map);
-    }
-
-    /**
-     * Removes markers of the direction.
-     *
-     * @param origin
-     * @param destination
-     */
-    function removeDirectionMarkers(origin, destination) {
-        origin.setMap(null);
-        destination.setMap(null);
     }
 
     /**
@@ -122,22 +109,10 @@ $(document).ready(function () {
                 console.log(data);
                 if (data.hasOwnProperty('routes') && data.routes.length > 0) {
                     let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points);
-                    let path = new google.maps.Polyline({
-                        path: points,
-                        strokeColor: "#FF0000",
-                        strokeOpacity: 1.0,
-                        strokeWeight: 2
-                    });
 
-                    let originMarker = new google.maps.Marker({
-                        position: data.routes[0].legs[0].start_location,
-                        icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
-                    });
-
-                    let destinationMarker = new google.maps.Marker({
-                        position: data.routes[0].legs[0].end_location,
-                        icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-b.png&text=B&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
-                    });
+                    path.setPath(points);
+                    originMarker.setPosition(origin);
+                    destinationMarker.setPosition(destination);
 
                     addLine(path, map);
                     addDirectionMarkers(originMarker, destinationMarker, map);
@@ -193,13 +168,19 @@ $(document).ready(function () {
             success: function (data) {
                 const ICON_SIZE = 38;
 
-                let markers = [],   //markers to be displayed
-                    icon = {
-                        url: "/images/velib-marker.png",
-                        scaledSize: new google.maps.Size(ICON_SIZE, ICON_SIZE),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(0, 0)
-                    };
+                let icon = {
+                    url: "/images/velib-marker.png",
+                    scaledSize: new google.maps.Size(ICON_SIZE, ICON_SIZE),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(0, 0)
+                };
+
+                markers.forEach(function (marker) {
+                    marker.setMap(null);
+                    marker = null;
+                });
+
+                markers = [];
 
                 data.forEach(function (place) { //for each station...
                     let marker = new google.maps.Marker({
@@ -250,15 +231,32 @@ $(document).ready(function () {
         return Number((met * 3.5 * weight * time / 200).toFixed(1));
     }
 
-    /**
-     * Disconnection of the user.
-     */
     function disconnection() {
         document.getElementById('disconnectionForm').submit();
     }
 
     function saveSettings() {
         localStorage.weight = $('#weight').val();
+    }
+
+    function createMarkers() {
+        path = new google.maps.Polyline({
+            strokeColor: "#FF0000",
+            strokeOpacity: 1.0,
+            strokeWeight: 2
+        });
+        originMarker = new google.maps.Marker({
+            icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
+        });
+        destinationMarker = new google.maps.Marker({
+            icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-b.png&text=B&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
+        });
+    }
+
+    function addControlsToMap(map) {
+        map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('footer'));
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('menuBtn'));
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(document.getElementById('directions'));
     }
 
     /**
@@ -289,9 +287,9 @@ $(document).ready(function () {
 
                 toggleBounce(positionMarker);
 
-                map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('footer'));
-                map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('menuBtn'));
-                map.controls[google.maps.ControlPosition.TOP_RIGHT].push(document.getElementById('directions'));
+                createMarkers();
+
+                addControlsToMap(map);
 
                 map.addListener('click', function (event) {
                     update_timeout = setTimeout(function () {
