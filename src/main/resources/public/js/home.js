@@ -77,7 +77,7 @@ $(document).ready(function () {
     function updateInformation(data) {
         let distance = data.distance.value / 1000,
             duration = data.duration.value / 60,
-            calories = getEnergyConsumption(4, duration, localStorage.weight),
+            calories = getEnergyConsumption(localStorage.intensity, duration, localStorage.weight),
             emission = getCO2Emission(distance);
 
         $('#distance').text(data.distance.text);
@@ -237,6 +237,7 @@ $(document).ready(function () {
 
     function saveSettings() {
         localStorage.weight = $('#weight').val();
+        localStorage.intensity = $('select[name=intensity]').val();
     }
 
     function createMarkers() {
