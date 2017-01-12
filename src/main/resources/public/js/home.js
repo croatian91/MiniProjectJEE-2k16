@@ -90,7 +90,7 @@ $(document).ready(function () {
     function updateInformation(data) {
         let distance = data.distance.value / 1000,
             duration = data.duration.value / 60,
-            calories = getEnergyConsumption(4, duration, 65),
+            calories = getEnergyConsumption(4, duration, localStorage.weight),
             emission = getCO2Emission(distance);
 
         $('#distance').text(data.distance.text);
@@ -257,6 +257,10 @@ $(document).ready(function () {
         document.getElementById('disconnectionForm').submit();
     }
 
+    function saveSettings() {
+        localStorage.weight = $('#weight').val();
+    }
+
     /**
      * Gets the current position via geolocation.
      * Adds stations to the map.
@@ -313,6 +317,7 @@ $(document).ready(function () {
         $('#menu').find('a').on('click', closeNav);
         $('#menuBtn').on('click', openNav);
         $('#disconnection').on('click', disconnection);
+        $('#save').on('click', saveSettings);
 
         initMap();
     });
