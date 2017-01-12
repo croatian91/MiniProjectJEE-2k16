@@ -305,13 +305,9 @@ $(document).ready(function () {
     $(window).load(function () {
         $('#settingsModal').modal('show');
 
-        $('#menu').find('a').on('click', function () {
-            closeNav();
-        });
-
-        $('#menuBtn').on('click', function () {
-            openNav();
-        });
+        $('#menu').find('a').on('click', closeNav);
+        $('#menuBtn').on('click', openNav);
+        $('#disconnection').on('click', disconnection);
 
         initMap();
     });
