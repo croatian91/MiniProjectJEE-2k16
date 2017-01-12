@@ -53,7 +53,7 @@ $(document).ready(function () {
      * @param path
      * @param map
      */
-    function addLine(path, map) {
+    function addLineToMap(path, map) {
         path.setMap(map);
     }
 
@@ -64,7 +64,7 @@ $(document).ready(function () {
      * @param destination
      * @param map
      */
-    function addDirectionMarkers(origin, destination, map) {
+    function addDirectionMarkersToMap(origin, destination, map) {
         origin.setMap(map);
         destination.setMap(map);
     }
@@ -114,8 +114,8 @@ $(document).ready(function () {
                     originMarker.setPosition(origin);
                     destinationMarker.setPosition(destination);
 
-                    addLine(path, map);
-                    addDirectionMarkers(originMarker, destinationMarker, map);
+                    addLineToMap(path, map);
+                    addDirectionMarkersToMap(originMarker, destinationMarker, map);
                     updateInformation(data.routes[0].legs[0]);
                 }
 
