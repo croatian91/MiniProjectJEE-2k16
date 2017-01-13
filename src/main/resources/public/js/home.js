@@ -293,6 +293,14 @@ $(document).ready(function () {
         );
     }
 
+    function createSearchBoxes() {
+        let departure = document.getElementById('departure'),
+            arrival = document.getElementById('arrival');
+
+        new google.maps.places.SearchBox(departure);
+        new google.maps.places.SearchBox(arrival);
+    }
+
     function addControlsToMap(map) {
         map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('footer'));
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('menuBtn'));
@@ -369,6 +377,8 @@ $(document).ready(function () {
 
                 createMarkers(map);
 
+                createSearchBoxes();
+
                 toggleBounce(positionMarker);
 
                 positionMarker.setPosition(position);
@@ -405,11 +415,10 @@ $(document).ready(function () {
         $('#menu').find('a').on('click', closeNav);
         $('#menuBtn').on('click', openNav);
         $('#disconnection').on('click', disconnection);
-        $('#save').on('click', saveSettings);
+        $('#saveBtn').on('click', saveSettings);
         $('#directions').on('click', toggleDirections);
 
         initMap();
-
     });
 });
 

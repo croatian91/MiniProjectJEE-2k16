@@ -81,6 +81,14 @@ form[name="f"] {
     width: 300px;
 }
 
+/*
+    It turns out that it gets displayed at z-index 1000 by default and modals are at 1050.
+    Puts the google places autocomplete dropdown results above the bootstrap modal 1050 zindex.
+*/
+.pac-container {
+    z-index: 1051 !important;
+}
+
 #alert {
     margin: 15px;
 }
