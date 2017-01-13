@@ -341,6 +341,10 @@ $(document).ready(function () {
                     }, 200);
                 });
 
+                google.maps.event.addListener(map, 'bounds_changed', function () {
+                    toggleBounce(positionMarker);
+                });
+
                 google.maps.event.addListener(map, 'dblclick', function () {
                     clearTimeout(update_timeout);
                 });
