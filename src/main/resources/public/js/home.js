@@ -347,7 +347,29 @@ $(document).ready(function () {
         $('#save').on('click', saveSettings);
 
         initMap();
+
+        /**
+         * Override of the ClusterIcon's event onAdd.
+         * It prevents creating a direction when a cluster icon has been clicked.
+         */
+        ClusterIcon.prototype.onAdd = function () {
+            this.div_ = document.createElement('DIV');
+            if (this.visible_) {
+                let pos = this.getPosFromLatLng_(this.center_);
+                this.div_.style.cssText = this.createCss(pos);
+                this.div_.innerHTML = this.sums_.text;
+            }
+
+            let panes = this.getPanes();
+            panes.overlayMouseTarget.appendChild(this.div_);
+
+            let self = this;
+            google.maps.event.addDomListener(this.div_, 'click', function (e) {
+                e.stopImmediatePropagation();
+                self.triggerClusterClick();
+            });
+        };
+
     });
 });
-
 
