@@ -5,6 +5,7 @@ $(document).ready(function () {
      *  Global variables.
      */
     let path,
+        positionMarker,
         clusterMarker,
         originMarker,
         destinationMarker,
@@ -255,10 +256,17 @@ $(document).ready(function () {
             strokeOpacity: 0.7,
             strokeWeight: 5
         });
+
+        positionMarker = new google.maps.Marker({
+            map: map,
+            title: "You are here!",
+        });
+
         originMarker = new google.maps.Marker({
             map: map,
             icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
         });
+
         destinationMarker = new google.maps.Marker({
             map: map,
             icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-b.png&text=B&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
@@ -324,12 +332,6 @@ $(document).ready(function () {
                     zoom: 14
                 });
 
-                let positionMarker = new google.maps.Marker({
-                    map: map,
-                    title: "You are here!",
-                    position: position
-                });
-
                 map.addListener('click', function (event) {
                     update_timeout = setTimeout(function () {
                         let lat = event.latLng.lat(),
@@ -350,23 +352,13 @@ $(document).ready(function () {
                 createMarkers(map);
 
                 toggleBounce(positionMarker);
+
+                positionMarker.setPosition(position);
             });
         }
     }
 
     $(window).load(function () {
-        if (loadSettings() == false)
-            $('#settingsModal').modal('show');
-
-        $('#menu').find('a').on('click', closeNav);
-        $('#menuBtn').on('click', openNav);
-        $('#disconnection').on('click', disconnection);
-        $('#save').on('click', saveSettings);
-
-        $('#directions').on('click', toggleDirections);
-
-        initMap();
-
         /**
          * Override of the ClusterIcon's event onAdd.
          * It prevents creating a direction when a cluster icon has been clicked.
@@ -388,6 +380,17 @@ $(document).ready(function () {
                 self.triggerClusterClick();
             });
         };
+
+        if (loadSettings() == false)
+            $('#settingsModal').modal('show');
+
+        $('#menu').find('a').on('click', closeNav);
+        $('#menuBtn').on('click', openNav);
+        $('#disconnection').on('click', disconnection);
+        $('#save').on('click', saveSettings);
+        $('#directions').on('click', toggleDirections);
+
+        initMap();
 
     });
 });
