@@ -261,9 +261,9 @@ $(document).ready(function () {
 
     function createMarkers() {
         path = new google.maps.Polyline({
-            strokeColor: "#FF0000",
-            strokeOpacity: 1.0,
-            strokeWeight: 2
+            strokeColor: "#8082ff",
+            strokeOpacity: 0.7,
+            strokeWeight: 5
         });
         originMarker = new google.maps.Marker({
             icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
