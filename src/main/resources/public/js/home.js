@@ -104,7 +104,6 @@ $(document).ready(function () {
      * @param map
      */
     function traceDirection(data, map) {
-        console.log(data);
         if (data.hasOwnProperty('routes') && data.routes.length > 0) {
             let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points),
                 distance = 0.5,
@@ -226,7 +225,6 @@ $(document).ready(function () {
             url: url,
             dataType: 'json',
             success: function (data) {
-                console.log(data);
                 if (data.status == 'ZERO_RESULTS') {
                     displayMessage('No route available.', 'info');
 
