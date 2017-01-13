@@ -244,6 +244,11 @@ $(document).ready(function () {
         document.getElementById('disconnectionForm').submit();
     }
 
+    /**
+     * Instantiate objects.
+     *
+     * @param map
+     */
     function createMarkers(map) {
         path = new google.maps.Polyline({
             strokeColor: "#8082ff",
