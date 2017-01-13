@@ -113,7 +113,8 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 if (data.hasOwnProperty('routes') && data.routes.length > 0) {
-                    let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points);
+                    let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points),
+                        distance = 0.5;
 
                     path.setPath(points);
                     originMarker.setPosition(origin);
@@ -121,6 +122,9 @@ $(document).ready(function () {
 
                     addLineToMap(path, map);
                     updateInformation(data.routes[0].legs[0]);
+
+                    addStationsToMap(map, origin.lat, origin.lng, distance, true); //origin
+                    addStationsToMap(map, destination.lat, destination.lng, distance);   //destination
 
                     if ($('#directions').find('.content').css('display') == 'none')
                         toggleDirections();
@@ -166,11 +170,19 @@ $(document).ready(function () {
      * Latitude and Longitude are swapped because of the GeoJSON's structure.
      *
      * @param map Google map object
+     * @param lat
+     * @param lng
+     * @param distance
+     * @param remove
      */
-    function addStationsToMap(map) {
+    function addStationsToMap(map, lat, lng, distance, remove) {
+        let url = (distance == undefined) ?
+            `/stations/lat/${lat}/lng/${lng}/` :
+            `/stations/distance/${distance}/lat/${lat}/lng/${lng}/`;
+
         $.ajax({
             type: "GET",
-            url: `/stations/lat/${map.getCenter().lng()}/lng/${map.getCenter().lat()}/`,
+            url: url,
             dataType: 'json',
             success: function (data) {
                 const ICON_SIZE = 38;
@@ -182,12 +194,14 @@ $(document).ready(function () {
                     anchor: new google.maps.Point(0, 0)
                 };
 
-                markers.forEach(function (marker) {
-                    marker.setMap(null);
-                    marker = null;
-                });
+                if (remove == true) {
+                    markers.forEach(function (marker) {
+                        marker.setMap(null);
+                        marker = null;
+                    });
 
-                markers = [];
+                    markers = [];
+                }
 
                 data.forEach(function (place) { //for each station...
                     let marker = new google.maps.Marker({
@@ -351,7 +365,7 @@ $(document).ready(function () {
 
                 addControlsToMap(map);
 
-                addStationsToMap(map);
+                addStationsToMap(map, map.getCenter().lng(), map.getCenter().lat());
 
                 createMarkers(map);
 
