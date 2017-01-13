@@ -59,7 +59,7 @@ form[name="f"] {
     margin: 100px;
 }
 
-button[type=submit] {
+.form-actions {
     margin-top: 15px;
 }
 
