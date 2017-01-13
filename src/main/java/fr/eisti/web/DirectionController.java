@@ -20,7 +20,7 @@ public class DirectionController {
     private DirectionServiceImpl directionService;
 
     @RequestMapping("directions/origin/lat/{origLat}/lng/{origLng}/destination/lat/{destLat}/lng/{destLng}/")
-    Direction getDirection(
+    Direction getDirectionByLatLng(
             @PathVariable("origLat") double origLat,
             @PathVariable("origLng") double origLng,
             @PathVariable("destLat") double destLat,
@@ -30,6 +30,14 @@ public class DirectionController {
         Point origin = geometryFactory.createPoint(new Coordinate(origLat, origLng));
         Point destination = geometryFactory.createPoint(new Coordinate(destLat, destLng));
 
-        return directionService.getDirection(origin, destination);
+        return directionService.getDirectionByLatLng(origin, destination);
+    }
+
+    @RequestMapping("directions/departure/{departure}/arrival/{arrival}/")
+    Direction getDirectionByAddress(
+            @PathVariable("departure") String departure,
+            @PathVariable("arrival") String arrival
+    ) {
+        return directionService.getDirectionByAddress(departure, arrival);
     }
 }

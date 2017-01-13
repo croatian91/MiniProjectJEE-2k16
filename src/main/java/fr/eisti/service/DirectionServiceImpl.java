@@ -18,7 +18,7 @@ public class DirectionServiceImpl implements DirectionService {
     private static final String apiKey = "AIzaSyC4yvBrfQ4S6pHc3itNV-X4jIbTPflXRiU";
 
     @Override
-    public Direction getDirection(Point origin, Point destination) {
+    public Direction getDirectionByLatLng(Point origin, Point destination) {
         String url = String.format(
                 "https://maps.googleapis.com/maps/api/directions/json?origin=%.20f,%.20f&destination=%.20f,%.20f&units=metric&mode=bicycling&key=%s",
                 origin.getX(),
@@ -27,6 +27,20 @@ public class DirectionServiceImpl implements DirectionService {
                 destination.getY(),
                 apiKey
         );
+
+        return restTemplate.getForObject(url, Direction.class);
+    }
+
+    @Override
+    public Direction getDirectionByAddress(String departure, String arrival) {
+        String url = String.format(
+                "https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&units=metric&mode=bicycling&key=%s",
+                departure,
+                arrival,
+                apiKey
+        );
+
+        System.out.println(url);
 
         return restTemplate.getForObject(url, Direction.class);
     }

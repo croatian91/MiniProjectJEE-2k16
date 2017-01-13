@@ -4,7 +4,8 @@ $(document).ready(function () {
     /**
      *  Global variables.
      */
-    let path,
+    let map,
+        path,
         positionMarker,
         clusterMarker,
         originMarker,
@@ -43,21 +44,19 @@ $(document).ready(function () {
                     info.open(marker.getMap(), marker);
                 },
                 error: function (response) {
-                    displayError(response, 'Could not get information about the station. Please retry later.')
+                    displayMessage('Could not get information about the station. Please retry later.', 'warning')
                 }
             });
         });
     }
 
-    function displayError(response, message) {
+    function displayMessage(message, type) {
         $('#message').text(message);
-        $('#alert').slideDown();
+        $('#alert').removeClass('alert-warning alert-info').addClass(`alert-${type}`).slideDown();
 
         setTimeout(function () {
             $('#alert').hide();
         }, 3000);
-
-        console.log(response);
     }
 
     /**
@@ -101,40 +100,26 @@ $(document).ready(function () {
      * Retrieves the route between two points.
      * Adds the route and the markers on the map .
      *
-     * @param origin
-     * @param destination
+     * @param data
      * @param map
      */
-    function traceDirection(origin, destination, map) {
-        $.ajax({
-            type: "GET",
-            url: `directions/origin/lat/${origin.lat}/lng/${origin.lng}/destination/lat/${destination.lat}/lng/${destination.lng}/`,
-            dataType: 'json',
-            success: function (data) {
-                console.log(data);
-                if (data.hasOwnProperty('routes') && data.routes.length > 0) {
-                    let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points),
-                        distance = 0.5;
+    function traceDirection(data, map) {
+        console.log(data);
+        if (data.hasOwnProperty('routes') && data.routes.length > 0) {
+            let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points),
+                distance = 0.5,
+                origin = data.routes[0].legs[0].start_location,
+                destination = data.routes[0].legs[0].end_location;
 
-                    path.setPath(points);
-                    originMarker.setPosition(origin);
-                    destinationMarker.setPosition(destination);
+            path.setPath(points);
+            originMarker.setPosition(origin);
+            destinationMarker.setPosition(destination);
 
-                    addLineToMap(path, map);
-                    updateInformation(data.routes[0].legs[0]);
+            addLineToMap(path, map);
 
-                    addStationsToMap(map, origin.lat, origin.lng, distance, true); //origin
-                    addStationsToMap(map, destination.lat, destination.lng, distance);   //destination
-
-                    if ($('#directions').find('.content').css('display') == 'none')
-                        toggleDirections();
-                }
-
-            },
-            error: function (response) {
-                displayError(response, 'Could not get the station list. Please retry later.')
-            }
-        });
+            addStationsToMap(map, origin.lat, origin.lng, distance, true); //origin
+            addStationsToMap(map, destination.lat, destination.lng, distance);   //destination
+        }
     }
 
     /**
@@ -226,7 +211,37 @@ $(document).ready(function () {
                 clusterMarker.addMarkers(markers);
             },
             error: function (response) {
-                displayError(response, 'Could not get the station list. Please retry later.')
+                displayMessage('Could not get the station list. Please retry later.', 'warning')
+            }
+        });
+    }
+
+    function search(departure, arrival) {
+        let url = (departure.hasOwnProperty('lat') && arrival.hasOwnProperty('lng')) ?
+            `directions/origin/lat/${departure.lat}/lng/${departure.lng}/destination/lat/${arrival.lat}/lng/${arrival.lng}/` :
+            `directions/departure/${$('#departure').val()}/arrival/${$('#arrival').val()}/`;
+
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if (data.status == 'ZERO_RESULTS') {
+                    displayMessage('No route available.', 'info');
+
+                    return;
+                }
+
+                traceDirection(data, map);
+
+                updateInformation(data.routes[0].legs[0]);
+
+                if ($('#directions').find('.content').css('display') == 'none')
+                    toggleDirections();
+            },
+            error: function (response) {
+                displayMessage('Could not get the station list. Please retry later.', 'warning')
             }
         });
     }
@@ -349,7 +364,7 @@ $(document).ready(function () {
 
                 let update_timeout = null;
 
-                let map = new google.maps.Map(document.getElementById('map'), {
+                map = new google.maps.Map(document.getElementById('map'), {
                     center: position, //{lat: position.coords.latitude, lng: position.coords.longitude},
                     zoom: 14
                 });
@@ -359,7 +374,7 @@ $(document).ready(function () {
                         let lat = event.latLng.lat(),
                             lng = event.latLng.lng();
 
-                        traceDirection(position, {lat: lat, lng: lng}, map);
+                        search(position, {lat: lat, lng: lng});
                     }, 200);
                 });
 
@@ -409,6 +424,8 @@ $(document).ready(function () {
             });
         };
 
+        initMap();
+
         if (loadSettings() == false)
             $('#settingsModal').modal('show');
 
@@ -416,6 +433,7 @@ $(document).ready(function () {
         $('#menuBtn').on('click', openNav);
         $('#disconnection').on('click', disconnection);
         $('#saveBtn').on('click', saveSettings);
+        $('#searchBtn').on('click', search);
         $('#directions').on('click', toggleDirections);
         $('#departureBtn').on('click', function () {
             $('#departure').val('');
@@ -423,8 +441,6 @@ $(document).ready(function () {
         $('#arrivalBtn').on('click', function () {
             $('#arrival').val('');
         });
-
-        initMap();
     });
 });
 

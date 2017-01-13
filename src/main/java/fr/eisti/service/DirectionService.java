@@ -10,5 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DirectionService {
 
-    Direction getDirection(Point origin, Point destination);
+    Direction getDirectionByLatLng(Point origin, Point destination);
+
+    Direction getDirectionByAddress(String departure, String arrival);
 }
