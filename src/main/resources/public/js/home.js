@@ -167,7 +167,7 @@ $(document).ready(function () {
     function addStationsToMap(map) {
         $.ajax({
             type: "GET",
-            url: `/stations/distance/0.5/lat/${map.getCenter().lat()}/lng/${map.getCenter().lng()}/`,
+            url: `/stations/lat/${map.getCenter().lng()}/lng/${map.getCenter().lat()}/`,
             dataType: 'json',
             success: function (data) {
                 const ICON_SIZE = 38;
@@ -290,8 +290,8 @@ $(document).ready(function () {
             navigator.geolocation.getCurrentPosition(function (position) {
                 //For testing
                 position = {
-                    lat: 48.893268664697416,
-                    lng: 2.412715733388685
+                    lat: 48.870393671603765,
+                    lng: 2.384222472712587
                 };
 
                 let update_timeout = null;

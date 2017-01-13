@@ -59,6 +59,16 @@ public class StationController {
         return district != null ? stationRepository.findByDistrict(district.getcAr()) : null;
     }
 
+    @RequestMapping("/stations/lat/{lat}/lng/{lng}/")
+    public Iterable ListByCountyOrDistrict(@PathVariable("lat") double lat, @PathVariable("lng") double lng) {
+        County county = countyRepository.findByCoordinates(lat, lng);
+
+        //Check if in Ile de France
+        if (county == null) return null;
+
+        return (county.getCodeDept() == 75) ? ListByDistrict(lat, lng) : ListByCounty(lat, lng);
+    }
+
     @RequestMapping("/stations/distance/{distance}/lat/{lat}/lng/{lng}/")
     public Iterable getStationListByDistance(
             @PathVariable("distance") double distance,
