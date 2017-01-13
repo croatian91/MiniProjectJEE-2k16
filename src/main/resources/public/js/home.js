@@ -77,6 +77,7 @@ $(document).ready(function () {
     function updateInformation(data) {
         let distance = data.distance.value / 1000,
             duration = data.duration.value / 60,
+            amount = getAmount(duration, {type: 'none'}),
             calories = getEnergyConsumption(
                 localStorage.getItem('intensity'),
                 duration,
@@ -86,8 +87,9 @@ $(document).ready(function () {
 
         $('#distance').text(data.distance.text);
         $('#duration').text(data.duration.text);
-        $('#calories').text(calories + ' Kcal');
-        $('#emission').text(emission + ' Kg');
+        $('#amount').text(`${amount} €`);
+        $('#calories').text(`${calories} Kcal`);
+        $('#emission').text(`${emission} Kg`);
 
         $('#directionTable').find('tbody tr').remove();
 
@@ -254,6 +256,39 @@ $(document).ready(function () {
      */
     function getCO2Emission(distance) {
         return Number((0.06981 * distance).toFixed(1));
+    }
+
+    /**
+     * Estimate the amount.
+     *
+     * @param duration in minutes
+     * @param subscription
+     * @returns {number}
+     */
+    function getAmount(duration, subscription) {
+        let amount, free;
+
+        if (subscription.type == 'classic') {
+            amount = 29;
+            free = 30;
+        } else if (subscription.type == 'none') {
+            amount = 1.70;
+            free = 30;
+        } else {    //premium
+            amount = 39;
+            free = 45;
+        }
+
+        if (duration < free)
+            amount += 0;
+        else if (duration < free + 30)
+            amount += 1;
+        else if (duration < free + 60)
+            amount += 2;
+        else
+            amount += (duration % 30) * 2;
+
+        return Number(amount).toFixed(1);
     }
 
     /**
