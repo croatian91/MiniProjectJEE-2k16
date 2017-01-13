@@ -40,8 +40,6 @@ public class DirectionServiceImpl implements DirectionService {
                 apiKey
         );
 
-        System.out.println(url);
-
         return restTemplate.getForObject(url, Direction.class);
     }
 }
