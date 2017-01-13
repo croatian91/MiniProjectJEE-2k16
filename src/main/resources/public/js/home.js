@@ -121,6 +121,9 @@ $(document).ready(function () {
                     addLineToMap(path, map);
                     addDirectionMarkersToMap(originMarker, destinationMarker, map);
                     updateInformation(data.routes[0].legs[0]);
+
+                    if ($('#directions').find('.content').css('display') == 'none')
+                        toggleDirections();
                 }
 
             },
@@ -272,6 +275,10 @@ $(document).ready(function () {
         localStorage.setItem('intensity', intensity);
     }
 
+    function toggleDirections() {
+        $('#directions').find('.header, .content').toggle('slow');
+    }
+
     /**
      * @returns {boolean}
      */
@@ -345,6 +352,8 @@ $(document).ready(function () {
         $('#menuBtn').on('click', openNav);
         $('#disconnection').on('click', disconnection);
         $('#save').on('click', saveSettings);
+
+        $('#directions').on('click', toggleDirections);
 
         initMap();
 
