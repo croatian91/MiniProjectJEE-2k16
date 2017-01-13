@@ -417,6 +417,12 @@ $(document).ready(function () {
         $('#disconnection').on('click', disconnection);
         $('#saveBtn').on('click', saveSettings);
         $('#directions').on('click', toggleDirections);
+        $('#departureBtn').on('click', function () {
+            $('#departure').val('');
+        });
+        $('#arrivalBtn').on('click', function () {
+            $('#arrival').val('');
+        });
 
         initMap();
     });
