@@ -5,6 +5,7 @@ $(document).ready(function () {
      *  Global variables.
      */
     let path,
+        clusterMarker,
         originMarker,
         destinationMarker,
         markers = [];
@@ -69,18 +70,6 @@ $(document).ready(function () {
     }
 
     /**
-     * Adds two markers on the map. One for the origin and the another for the destination.
-     *
-     * @param origin
-     * @param destination
-     * @param map
-     */
-    function addDirectionMarkersToMap(origin, destination, map) {
-        origin.setMap(map);
-        destination.setMap(map);
-    }
-
-    /**
      * Updates information about the direction. i.e. distance, duration, etc..
      *
      * @param data
@@ -130,7 +119,6 @@ $(document).ready(function () {
                     destinationMarker.setPosition(destination);
 
                     addLineToMap(path, map);
-                    addDirectionMarkersToMap(originMarker, destinationMarker, map);
                     updateInformation(data.routes[0].legs[0]);
 
                     if ($('#directions').find('.content').css('display') == 'none')
@@ -219,11 +207,8 @@ $(document).ready(function () {
                     markers.push(marker);
                 });
 
-                new MarkerClusterer(
-                    map,
-                    markers,
-                    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'}
-                );
+                clusterMarker.clearMarkers();
+                clusterMarker.addMarkers(markers);
             },
             error: function (response) {
                 displayError(response, 'Could not get the station list. Please retry later.')
@@ -259,18 +244,26 @@ $(document).ready(function () {
         document.getElementById('disconnectionForm').submit();
     }
 
-    function createMarkers() {
+    function createMarkers(map) {
         path = new google.maps.Polyline({
             strokeColor: "#8082ff",
             strokeOpacity: 0.7,
             strokeWeight: 5
         });
         originMarker = new google.maps.Marker({
+            map: map,
             icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-a.png&text=A&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
         });
         destinationMarker = new google.maps.Marker({
+            map: map,
             icon: 'https://mts.googleapis.com/maps/vt/icon/name=icons/spotlight/spotlight-waypoint-b.png&text=B&psize=16&font=fonts/Roboto-Regular.ttf&color=ff333333&ax=44&ay=48&scale=1'
         });
+
+        clusterMarker = new MarkerClusterer(
+            map,
+            markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'}
+        );
     }
 
     function addControlsToMap(map) {
@@ -332,10 +325,6 @@ $(document).ready(function () {
                     position: position
                 });
 
-                toggleBounce(positionMarker);
-
-                createMarkers();
-
                 addControlsToMap(map);
 
                 map.addListener('click', function (event) {
@@ -352,6 +341,10 @@ $(document).ready(function () {
                 });
 
                 addStationsToMap(map);
+
+                createMarkers(map);
+
+                toggleBounce(positionMarker);
             });
         }
     }
