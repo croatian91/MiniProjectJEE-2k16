@@ -330,8 +330,6 @@ $(document).ready(function () {
                     position: position
                 });
 
-                addControlsToMap(map);
-
                 map.addListener('click', function (event) {
                     update_timeout = setTimeout(function () {
                         let lat = event.latLng.lat(),
@@ -344,6 +342,8 @@ $(document).ready(function () {
                 google.maps.event.addListener(map, 'dblclick', function () {
                     clearTimeout(update_timeout);
                 });
+
+                addControlsToMap(map);
 
                 addStationsToMap(map);
 
