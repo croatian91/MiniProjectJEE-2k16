@@ -204,6 +204,12 @@ $(document).ready(function () {
 
                     markers.push(marker);
                 });
+
+                new MarkerClusterer(
+                    map,
+                    markers,
+                    {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'}
+                );
             },
             error: function (response) {
                 console.log(response);
