@@ -41,10 +41,21 @@ $(document).ready(function () {
                     info.open(marker.getMap(), marker);
                 },
                 error: function (response) {
-                    console.log(response);
+                    displayError(response, 'Could not get information about the station. Please retry later.')
                 }
             });
         });
+    }
+
+    function displayError(response, message) {
+        $('#message').text(message);
+        $('#alert').slideDown();
+
+        setTimeout(function () {
+            $('#alert').hide();
+        }, 3000);
+
+        console.log(response);
     }
 
     /**
@@ -128,7 +139,7 @@ $(document).ready(function () {
 
             },
             error: function (response) {
-                console.log(response);
+                displayError(response, 'Could not get the station list. Please retry later.')
             }
         });
     }
@@ -215,7 +226,7 @@ $(document).ready(function () {
                 );
             },
             error: function (response) {
-                console.log(response);
+                displayError(response, 'Could not get the station list. Please retry later.')
             }
         });
     }
@@ -266,6 +277,7 @@ $(document).ready(function () {
         map.controls[google.maps.ControlPosition.BOTTOM_CENTER].push(document.getElementById('footer'));
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(document.getElementById('menuBtn'));
         map.controls[google.maps.ControlPosition.TOP_RIGHT].push(document.getElementById('directions'));
+        map.controls[google.maps.ControlPosition.TOP_CENTER].push(document.getElementById('alert'));
     }
 
     function saveSettings() {
