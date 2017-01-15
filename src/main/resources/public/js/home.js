@@ -4,7 +4,6 @@
  *  Global variables.
  */
 let map,
-    latlngbounds,
     path,
     positionMarker,
     clusterMarker,
@@ -112,6 +111,7 @@ $(document).ready(function () {
         if (data.hasOwnProperty('routes') && data.routes.length > 0) {
             let points = google.maps.geometry.encoding.decodePath(data.routes[0].overview_polyline.points),
                 distance = 0.5,
+                latlngbounds,
                 origin = data.routes[0].legs[0].start_location,
                 destination = data.routes[0].legs[0].end_location;
 
@@ -121,6 +121,8 @@ $(document).ready(function () {
 
             originMarker.address = data.routes[0].legs[0].start_address;
             destinationMarker.address = data.routes[0].legs[0].end_address;
+
+            latlngbounds = new google.maps.LatLngBounds();
 
             latlngbounds.extend(origin);
             latlngbounds.extend(destination);
@@ -567,8 +569,6 @@ $(document).ready(function () {
                     center: pos,
                     zoom: 14
                 });
-
-                latlngbounds = new google.maps.LatLngBounds();
 
                 map.addListener('click', function (event) {
                     update_timeout = setTimeout(function () {
