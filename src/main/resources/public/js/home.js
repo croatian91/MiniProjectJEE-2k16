@@ -1,17 +1,17 @@
 'use strict';
 
-$(document).ready(function () {
-    /**
-     *  Global variables.
-     */
-    let map,
-        path,
-        positionMarker,
-        clusterMarker,
-        originMarker,
-        destinationMarker,
-        markers = [];
+/**
+ *  Global variables.
+ */
+let map,
+    path,
+    positionMarker,
+    clusterMarker,
+    originMarker,
+    destinationMarker,
+    markers = [];
 
+$(document).ready(function () {
     /**
      * Adds a listener for each marker.
      * On a click event, retrieve information about the station (marker clicked).
@@ -25,7 +25,7 @@ $(document).ready(function () {
             let info = new google.maps.InfoWindow();
 
             $.ajax({
-                type: "GET",
+                type: 'GET',
                 url: `/stations/station/${marker.number}`,
                 dataType: 'json',
                 success: function (data) {
@@ -52,7 +52,7 @@ $(document).ready(function () {
 
     function displayMessage(message, type) {
         $('#message').text(message);
-        $('#alert').removeClass('alert-warning alert-info').addClass(`alert-${type}`).slideDown();
+        $('#alert').removeClass('alert-warning alert-danger alert-success alert-info').addClass(`alert-${type}`).slideDown();
 
         setTimeout(function () {
             $('#alert').hide();
@@ -85,6 +85,8 @@ $(document).ready(function () {
             ),
             emission = getCO2Emission(distance);
 
+        $('#favoriteBtn').css('display', 'block');
+
         $('#distance').text(data.distance.text);
         $('#duration').text(data.duration.text);
         $('#amount').text(`${amount} €`);
@@ -115,6 +117,11 @@ $(document).ready(function () {
             path.setPath(points);
             originMarker.setPosition(origin);
             destinationMarker.setPosition(destination);
+
+            originMarker.address = data.routes[0].legs[0].start_address;
+            destinationMarker.address = data.routes[0].legs[0].end_address;
+
+            console.log(data);
 
             addLineToMap(path, map);
 
@@ -167,7 +174,7 @@ $(document).ready(function () {
             `/stations/distance/${distance}/lat/${lat}/lng/${lng}/`;
 
         $.ajax({
-            type: "GET",
+            type: 'GET',
             url: url,
             dataType: 'json',
             success: function (data) {
@@ -217,6 +224,90 @@ $(document).ready(function () {
         });
     }
 
+    function findFavorite() {
+        return $.ajax({
+            type: 'POST',
+            url: `/favorites/findOne`,
+            dataType: 'json',
+            data: JSON.stringify({
+                startAddress: originMarker.address,
+                endAddress: destinationMarker.address,
+                departure: {
+                    lat: originMarker.getPosition().lat(),
+                    lng: originMarker.getPosition().lng()
+                },
+                arrival: {
+                    lat: destinationMarker.getPosition().lat(),
+                    lng: destinationMarker.getPosition().lng()
+                }
+            }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success: function (favorite) {
+                return favorite;
+            },
+            error: function (response) {
+                displayMessage('Could not verify if favorite exists', 'danger');
+            }
+        });
+    }
+
+    function addDirectionToFavorites() {
+        if (typeof originMarker.getPosition() == 'undefined')  return;
+
+        $.ajax({
+            type: 'PUT',
+            url: '/favorites/add',
+            dataType: 'json',
+            data: JSON.stringify({
+                startAddress: originMarker.address,
+                endAddress: destinationMarker.address,
+                departure: {
+                    lat: originMarker.getPosition().lat(),
+                    lng: originMarker.getPosition().lng()
+                },
+                arrival: {
+                    lat: destinationMarker.getPosition().lat(),
+                    lng: destinationMarker.getPosition().lng()
+                }
+            }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                if (data.hasOwnProperty('id')) {
+                    toggleFavoriteButton();
+                    displayMessage('Direction added to favorites successfully!', 'success');
+                }
+            },
+            error: function (response) {
+                displayMessage('Could not add to favorites. Please retry later.', 'danger');
+            }
+        });
+    }
+
+    function removeDirectionFromFavorites(id) {
+        $.ajax({
+            type: 'DELETE',
+            url: `/favorites/delete/${id}`,
+            dataType: 'json',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success: function (data) {
+                toggleFavoriteButton();
+                displayMessage('Direction removed from favorites successfully!', 'success');
+            },
+            error: function (response) {
+                displayMessage('Could not remove direction from favorites. Please retry later.', 'danger');
+            }
+        });
+    }
+
     function search(departure, arrival) {
         let url = (departure.hasOwnProperty('lat') && arrival.hasOwnProperty('lng')) ?
             `directions/origin/lat/${departure.lat}/lng/${departure.lng}/destination/lat/${arrival.lat}/lng/${arrival.lng}/` :
@@ -227,18 +318,47 @@ $(document).ready(function () {
             url: url,
             dataType: 'json',
             success: function (data) {
-                if (data.status == 'ZERO_RESULTS') {
-                    displayMessage('No route available.', 'info');
+                switch (data.status) {
+                    case 'OK':
+                        traceDirection(data, map);
 
-                    return;
+                        $.when(findFavorite()).done(function (favorite) {
+                            let $btn = $('#favoriteBtn');
+                            if (favorite.id > 0 && $btn.hasClass('btn-outline-primary') ||
+                                favorite.id == 0 && $btn.hasClass('btn-outline-success')
+                            ) toggleFavoriteButton();
+                        });
+
+                        updateInformation(data.routes[0].legs[0]);
+
+                        if ($('#directions').find('.content').css('display') == 'none')
+                            toggleDirections();
+
+                        break;
+                    case 'NOT_FOUND':
+                        displayMessage("One of the locations specified in the request's origin, destination, or waypoints could not be geocoded.", 'warning');
+                        break;
+                    case 'ZERO_RESULTS':
+                        displayMessage('No route could be found between the origin and destination.', 'info');
+                        break;
+                    case 'MAX_WAYPOINTS_EXCEEDED':
+                        displayMessage('Too many DirectionsWaypoint fields were provided in the DirectionsRequest.', 'info');
+                        break;
+                    case 'INVALID_REQUEST':
+                        displayMessage('The provided DirectionsRequest was invalid.', 'warning');
+                        break;
+                    case 'OVER_QUERY_LIMIT':
+                        displayMessage('The webpage has sent too many requests within the allowed time period.', 'warning');
+                        break;
+                    case 'REQUEST_DENIED':
+                        displayMessage('The webpage is not allowed to use the directions service.', 'warning');
+                        break;
+                    case 'UNKNOWN_ERROR':
+                        displayMessage('A directions request could not be processed due to a server error. The request may succeed if you try again.', 'warning');
+                        break;
+                    default:
+                        break;
                 }
-
-                traceDirection(data, map);
-
-                updateInformation(data.routes[0].legs[0]);
-
-                if ($('#directions').find('.content').css('display') == 'none')
-                    toggleDirections();
             },
             error: function (response) {
                 displayMessage('Could not get the station list. Please retry later.', 'warning')
@@ -364,7 +484,16 @@ $(document).ready(function () {
     }
 
     function toggleDirections() {
-        $('#directions').find('.header, .content').toggle('slow');
+        $('#directions').find('.header, .content').toggle('fast');
+    }
+
+    function toggleFavoriteButton() {
+        let $favoriteBtn = $('#favoriteBtn'),
+            text = $favoriteBtn.find('span').text();
+
+        $favoriteBtn.toggleClass('btn-outline-primary btn-outline-success');
+        $favoriteBtn.find('span').text(text == 'Added to favorites' ? 'Add to favorites' : 'Added to favorites');
+        $favoriteBtn.find('i').toggleClass('fa-plus fa-check');
     }
 
     /**
@@ -435,6 +564,13 @@ $(document).ready(function () {
     }
 
     $(window).load(function () {
+        let token = $("meta[name='_csrf']").attr("content"),
+            header = $("meta[name='_csrf_header']").attr("content");
+
+        $(document).ajaxSend(function (e, xhr) {
+            xhr.setRequestHeader(header, token);
+        });
+
         /**
          * Override of the ClusterIcon's event onAdd.
          * It prevents creating a direction when a cluster icon has been clicked.
@@ -467,6 +603,13 @@ $(document).ready(function () {
         $('#disconnection').on('click', disconnection);
         $('#saveBtn').on('click', saveSettings);
         $('#searchBtn').on('click', search);
+        $('#favoriteBtn').on('click', function () {
+            $.when(findFavorite()).done(function (favorite) {
+                (favorite.id > 0) ?
+                    removeDirectionFromFavorites(favorite.id) :
+                    addDirectionToFavorites();
+            });
+        });
         $('#directions').on('click', toggleDirections);
         $('#departureBtn').on('click', function () {
             $('#departure').val('');

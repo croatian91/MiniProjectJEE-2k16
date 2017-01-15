@@ -14,6 +14,7 @@ public class User {
     private String password;
     private String passwordConfirm;
     private Set<Role> roles;
+    private Set<Favorite> favorites;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,13 +48,21 @@ public class User {
     }
 
     @Transient
-    @Column(name = "passwordConfirm", nullable = false, length = 255)
     public String getPasswordConfirm() {
         return passwordConfirm;
     }
 
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
+    }
+
+    @OneToMany(mappedBy = "user")
+    public Set<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Set<Favorite> favorites) {
+        this.favorites = favorites;
     }
 
     @ManyToMany

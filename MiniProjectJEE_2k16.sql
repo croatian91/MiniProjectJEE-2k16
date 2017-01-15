@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 23, 2016 at 11:41 AM
+-- Generation Time: Jan 15, 2017 at 04:17 AM
 -- Server version: 5.7.16-0ubuntu0.16.04.1
 -- PHP Version: 7.0.8-0ubuntu0.16.04.3
 
@@ -109,16 +109,66 @@ INSERT INTO `District` (`id`, `N_SQ_AR`, `C_AR`, `C_ARINSEE`, `L_AR`, `L_AROFF`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `Favorite`
+--
+
+CREATE TABLE `Favorite` (
+  `id` int(11) NOT NULL,
+  `start_address` varchar(255) NOT NULL,
+  `end_address` varchar(255) NOT NULL,
+  `departure` point NOT NULL,
+  `arrival` point NOT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Role`
+--
+
+CREATE TABLE `Role` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `Station`
 --
 
 CREATE TABLE `Station` (
   `id` int(11) NOT NULL,
-  `Number` int(5) DEFAULT NULL,
-  `Name` varchar(49) DEFAULT NULL,
-  `Address` varchar(97) DEFAULT NULL,
-  `Location` point NOT NULL
+  `number` int(5) DEFAULT NULL,
+  `name` varchar(49) DEFAULT NULL,
+  `address` varchar(97) DEFAULT NULL,
+  `location` point NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `User`
+--
+
+CREATE TABLE `User` (
+  `id` int(11) NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8 NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `User_Role`
+--
+
+CREATE TABLE `User_Role` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Indexes for dumped tables
@@ -139,12 +189,38 @@ ALTER TABLE `District`
   ADD SPATIAL KEY `Geometry_X_Y` (`Geometry_X_Y`);
 
 --
+-- Indexes for table `Favorite`
+--
+ALTER TABLE `Favorite`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `departure` (`departure`(25),`arrival`(25),`user_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Indexes for table `Role`
+--
+ALTER TABLE `Role`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `Station`
 --
 ALTER TABLE `Station`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `Number` (`Number`),
-  ADD SPATIAL KEY `Coordinates` (`Location`);
+  ADD UNIQUE KEY `Number` (`number`),
+  ADD SPATIAL KEY `Coordinates` (`location`);
+
+--
+-- Indexes for table `User`
+--
+ALTER TABLE `User`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `User_Role`
+--
+ALTER TABLE `User_Role`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -154,17 +230,37 @@ ALTER TABLE `Station`
 -- AUTO_INCREMENT for table `County`
 --
 ALTER TABLE `County`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `District`
 --
 ALTER TABLE `District`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `Favorite`
+--
+ALTER TABLE `Favorite`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `Role`
+--
+ALTER TABLE `Role`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `Station`
 --
 ALTER TABLE `Station`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3677;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `User`
+--
+ALTER TABLE `User`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `User_Role`
+--
+ALTER TABLE `User_Role`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
