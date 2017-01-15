@@ -44,7 +44,7 @@ $(document).ready(function () {
 
                     info.open(marker.getMap(), marker);
                 },
-                error: function (response) {
+                error: function () {
                     displayMessage('Could not get information about the station. Please retry later.', 'warning')
                 }
             });
@@ -219,7 +219,7 @@ $(document).ready(function () {
                 clusterMarker.clearMarkers();
                 clusterMarker.addMarkers(markers);
             },
-            error: function (response) {
+            error: function () {
                 displayMessage('Could not get the station list. Please retry later.', 'warning')
             }
         });
@@ -249,7 +249,7 @@ $(document).ready(function () {
             success: function (favorite) {
                 return favorite;
             },
-            error: function (response) {
+            error: function () {
                 displayMessage('Could not verify if favorite exists', 'danger');
             }
         });
@@ -284,7 +284,7 @@ $(document).ready(function () {
                     displayMessage('Direction added to favorites successfully!', 'success');
                 }
             },
-            error: function (response) {
+            error: function () {
                 displayMessage('Could not add to favorites. Please retry later.', 'danger');
             }
         });
@@ -299,11 +299,11 @@ $(document).ready(function () {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            success: function (data) {
+            success: function () {
                 toggleFavoriteButton();
                 displayMessage('Direction removed from favorites successfully!', 'success');
             },
-            error: function (response) {
+            error: function () {
                 displayMessage('Could not remove direction from favorites. Please retry later.', 'danger');
             }
         });
@@ -361,7 +361,7 @@ $(document).ready(function () {
                         break;
                 }
             },
-            error: function (response) {
+            error: function () {
                 displayMessage('Could not get the station list. Please retry later.', 'warning')
             }
         });
@@ -376,15 +376,21 @@ $(document).ready(function () {
                 $('#favoritesTable').find('tbody tr').remove();
 
                 data.forEach(function (favorite) {
-                    let departure = {"lat": favorite.departure.coordinates[1], "lng": favorite.departure.coordinates[0]},
-                        arrival = {"lat": favorite.arrival.coordinates[1], "lng": favorite.arrival.coordinates[0]};
+                    let departure = {
+                            "lat": favorite.departure.coordinates[1],
+                            "lng": favorite.departure.coordinates[0]
+                        },
+                        arrival = {
+                            "lat": favorite.arrival.coordinates[1],
+                            "lng": favorite.arrival.coordinates[0]
+                        };
 
                     $('#favoritesTable').find('tbody').append(`<tr><td>${favorite.startAddress}</td><td>${favorite.endAddress}</td><td><button type="button" data-departure=${JSON.stringify(departure)} data-arrival=${JSON.stringify(arrival)} class="btn btn-primary start">start</button></td></tr>`);
                 });
             }
 
             ,
-            error: function (response) {
+            error: function () {
                 displayMessage('Could not get favorites. Please retry later.', 'danger');
             }
         });
@@ -543,15 +549,17 @@ $(document).ready(function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 //For testing
-                position = {
-                    lat: 48.870393671603765,
-                    lng: 2.384222472712587
-                };
+                /*position = {
+                 lat: 48.870393671603765,
+                 lng: 2.384222472712587
+                 };*/
 
                 let update_timeout = null;
 
+                let pos = {"lat": position.coords.latitude, "lng": position.coords.longitude};
+
                 map = new google.maps.Map(document.getElementById('map'), {
-                    center: position, //{lat: position.coords.latitude, lng: position.coords.longitude},
+                    center: pos,
                     zoom: 14
                 });
 
@@ -560,7 +568,7 @@ $(document).ready(function () {
                         let lat = event.latLng.lat(),
                             lng = event.latLng.lng();
 
-                        search(position, {lat: lat, lng: lng});
+                        search(pos, {lat: lat, lng: lng});
                     }, 200);
                 });
 
@@ -582,7 +590,7 @@ $(document).ready(function () {
 
                 toggleBounce(positionMarker);
 
-                positionMarker.setPosition(position);
+                positionMarker.setPosition(pos);
             });
         }
     }
@@ -638,8 +646,6 @@ $(document).ready(function () {
         $('#favoritesTable').on('click', '.start', function (event) {
             let departure = $(event.currentTarget).data('departure'),
                 arrival = $(event.currentTarget).data('arrival');
-
-            console.log($(event.currentTarget));
 
             search(departure, arrival);
 
