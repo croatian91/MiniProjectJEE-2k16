@@ -51,6 +51,11 @@ html, body {
     cursor: pointer;
 }
 
+.favorites {
+    overflow: auto;
+    height: 400px;
+}
+
 input {
     width: 50px;
 }
@@ -113,6 +118,10 @@ form[name="f"] {
     }
 
     #directions .content {
+        height: 150px;
+    }
+
+    .favorites {
         height: 150px;
     }
 }

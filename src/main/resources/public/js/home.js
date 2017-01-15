@@ -4,6 +4,7 @@
  *  Global variables.
  */
 let map,
+    favorites,
     path,
     positionMarker,
     clusterMarker,
@@ -56,7 +57,7 @@ $(document).ready(function () {
 
         setTimeout(function () {
             $('#alert').hide();
-        }, 3000);
+        }, 2000);
     }
 
     /**
@@ -366,6 +367,29 @@ $(document).ready(function () {
         });
     }
 
+    function getFavorites() {
+        $.ajax({
+            type: 'GET',
+            url: '/favorites/all',
+            dataType: 'json',
+            success: function (data) {
+                $('#favoritesTable').find('tbody tr').remove();
+
+                data.forEach(function (favorite) {
+                    let departure = {"lat": favorite.departure.coordinates[1], "lng": favorite.departure.coordinates[0]},
+                        arrival = {"lat": favorite.arrival.coordinates[1], "lng": favorite.arrival.coordinates[0]};
+
+                    $('#favoritesTable').find('tbody').append(`<tr><td>${favorite.startAddress}</td><td>${favorite.endAddress}</td><td><button type="button" data-departure=${JSON.stringify(departure)} data-arrival=${JSON.stringify(arrival)} class="btn btn-primary start">start</button></td></tr>`);
+                });
+            }
+
+            ,
+            error: function (response) {
+                displayMessage('Could not get favorites. Please retry later.', 'danger');
+            }
+        });
+    }
+
     /**
      * Estimate the CO2 emission of a car.
      * The constant is a generic factor calculated
@@ -610,6 +634,18 @@ $(document).ready(function () {
                     addDirectionToFavorites();
             });
         });
+        $('#favoritesModal').on('shown.bs.modal', getFavorites);
+        $('#favoritesTable').on('click', '.start', function (event) {
+            let departure = $(event.currentTarget).data('departure'),
+                arrival = $(event.currentTarget).data('arrival');
+
+            console.log($(event.currentTarget));
+
+            search(departure, arrival);
+
+            $('#favoritesModal').modal('toggle');
+
+        });
         $('#directions').on('click', toggleDirections);
         $('#departureBtn').on('click', function () {
             $('#departure').val('');
@@ -618,5 +654,6 @@ $(document).ready(function () {
             $('#arrival').val('');
         });
     });
-});
+})
+;
 
