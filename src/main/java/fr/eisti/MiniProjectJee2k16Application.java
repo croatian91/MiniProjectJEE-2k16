@@ -5,7 +5,9 @@ import fr.eisti.repository.StationRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -13,9 +15,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 
 @SpringBootApplication
-public class MiniProjectJee2k16Application {
+public class MiniProjectJee2k16Application extends SpringBootServletInitializer {
 
-    public static void main(String[] args) {
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        return application.sources(MiniProjectJee2k16Application.class);
+    }
+
+    public static void main(String[] args) throws Exception {
         SpringApplication.run(MiniProjectJee2k16Application.class, args);
     }
 
