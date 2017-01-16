@@ -188,12 +188,13 @@ $(document).ready(function () {
             success: function (data) {
                 const ICON_SIZE = 38;
 
-                let icon = {
-                    url: "/images/velib-marker.png",
-                    scaledSize: new google.maps.Size(ICON_SIZE, ICON_SIZE),
-                    origin: new google.maps.Point(0, 0),
-                    anchor: new google.maps.Point(0, 0)
-                };
+                let _ctx = $("meta[name='_ctx']").attr("content"),
+                    icon = {
+                        url: `${_ctx}/images/velib-marker.png`,
+                        scaledSize: new google.maps.Size(ICON_SIZE, ICON_SIZE),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(0, 0)
+                    };
 
                 if (remove == true) {
                     markers.forEach(function (marker) {
@@ -235,7 +236,7 @@ $(document).ready(function () {
     function findFavorite() {
         return $.ajax({
             type: 'POST',
-            url: `/favorites/findOne`,
+            url: "/favorites/findOne",
             dataType: 'json',
             data: JSON.stringify({
                 startAddress: originMarker.address,
@@ -267,7 +268,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'PUT',
-            url: '/favorites/add',
+            url: "/favorites/add",
             dataType: 'json',
             data: JSON.stringify({
                 startAddress: originMarker.address,
@@ -318,8 +319,8 @@ $(document).ready(function () {
 
     function search(departure, arrival) {
         let url = (departure.hasOwnProperty('lat') && arrival.hasOwnProperty('lng')) ?
-            `directions/origin/lat/${departure.lat}/lng/${departure.lng}/destination/lat/${arrival.lat}/lng/${arrival.lng}/` :
-            `directions/departure/${$('#departure').val()}/arrival/${$('#arrival').val()}/`;
+            `/directions/origin/lat/${departure.lat}/lng/${departure.lng}/destination/lat/${arrival.lat}/lng/${arrival.lng}/` :
+            `/directions/departure/${$('#departure').val()}/arrival/${$('#arrival').val()}/`;
 
         $.ajax({
             type: "GET",
@@ -377,7 +378,7 @@ $(document).ready(function () {
     function getFavorites() {
         $.ajax({
             type: 'GET',
-            url: '/favorites/all',
+            url: "/favorites/all",
             dataType: 'json',
             success: function (data) {
                 $('#favoritesTable').find('tbody tr').remove();
@@ -604,10 +605,17 @@ $(document).ready(function () {
 
     $(window).load(function () {
         let token = $("meta[name='_csrf']").attr("content"),
-            header = $("meta[name='_csrf_header']").attr("content");
+            header = $("meta[name='_csrf_header']").attr("content"),
+            _ctx = $("meta[name='_ctx']").attr("content");
 
         $(document).ajaxSend(function (e, xhr) {
             xhr.setRequestHeader(header, token);
+        });
+
+        $.ajaxPrefilter(function (options) {
+            if (!options.crossDomain) {
+                options.url = _ctx + options.url;
+            }
         });
 
         /**
